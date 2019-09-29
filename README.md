@@ -20,11 +20,11 @@ Modulból osztályt:
 
 bin/
 
-   main.py
+      main.py
    
-   user.py # where class User resides
+      user.py # where class User resides
    
-   dir.py # where class Dir resides
+      dir.py # where class Dir resides
    
 
 
