@@ -1,21 +1,21 @@
 # LegoVerseny
 
-**Modul/import tutorial:
+**Modul/import tutorial:**
 
 Feltéve ha ugyan abban a mappában van!
 
 
-Egy modulból egy függvényt:
+**Egy modulból egy függvényt:**
 
       from [module] import [function]
 
 
-Teljes modult:
+**Teljes modult:**
 
       from [module] import *
 
 
-Modulból osztályt:
+**Modulból osztályt:**
 
 
       bin/
