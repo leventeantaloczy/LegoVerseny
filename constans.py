@@ -3,7 +3,7 @@
 #                                                                                      #
 #                                                                                      #
 #                                                                                      #
-#                                  Konstans értékek                                    #
+#                                  Konstans ertekek                                    #
 #                                                                                      #
 #                                                                                      #
 #                                                                                      #
@@ -14,4 +14,6 @@
 
 
 speed = -50
-wheelRotateDegree = 230	
+turnSpeed = -20
+wheelRotateDegree = 350	
+ninetyDegreeTurn = 370
