@@ -13,7 +13,7 @@
 
 
 
-speed = -50
-turnSpeed = -20
-wheelRotateDegree = 350	
-ninetyDegreeTurn = 370
+speed = -40
+turnSpeed = -40
+wheelRotateDegree = 400 #323
+ninetyDegreeTurn = 1350 #375 1500
