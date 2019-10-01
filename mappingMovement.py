@@ -10,22 +10,21 @@ import brickpi3
 
 class Movement:
 
-	def motorRotateDegree(self, motorPort_1, motorPort_2, degrees, power, BP):															#egyenseben tarto fuggveny
+	def motorRotateDegree(self, motorPort_1, motorPort_2, degrees, power, BP, rampUpBoolean):															#egyenseben tarto fuggveny
 
-		#BP.set_sensor_type(BP.PORT_1, BP.SENSOR_TYPE.TOUCH)																				#szenzor init
 		power_1 = power
 		power_2 = power
-		#powerInc = power / 5
+		powerInc = power / 5
 
 		BP.reset_motor_encoder(motorPort_1)
 		BP.reset_motor_encoder(motorPort_2)
-
-		#power = power / 5
-		#for i in range(5):
-		#	BP.set_motor_power(motorPort_1, power)
-		#	BP.set_motor_power(motorPort_2, power)
-		#	time.sleep(0.05)
-		#	power += powerInc
+		if(rampUpBoolean):
+			power /= 5
+			for i in range(4):
+				BP.set_motor_power(motorPort_1, power)
+				BP.set_motor_power(motorPort_2, power)
+				time.sleep(0.05)
+				power += powerInc
 
 
 
@@ -48,6 +47,25 @@ class Movement:
 
 		time.sleep(0.01)
 
+	def oneMotorTurn(self, motorPort, motorPort_stop, turnDegree, power, BP):
+		BP.reset_motor_encoder(motorPort)
+		BP.reset_motor_encoder(motorPort_stop)
+
+		powerInc = power / 5
+		BP.set_motor_power(motorPort_stop, 0)
+		power /= 5
+		for i in range(4):
+			BP.set_motor_power(motorPort, power)
+			time.sleep(0.05)
+			power += powerInc
+
+
+		while  abs(BP.get_motor_encoder(motorPort)) <= turnDegree:
+			BP.set_motor_power(motorPort, power)
+			BP.set_motor_power(motorPort_stop, 0)
+
+		BP.set_motor_power(motorPort, 0)
+		time.sleep(0.1)
 
 
 
@@ -121,14 +139,5 @@ class Movement:
 
 
 
-	def oneMotorTurn(self, motorPort, motorPort_stop, turnDegree, power, BP):
-		BP.reset_motor_encoder(motorPort)
-		BP.reset_motor_encoder(motorPort_stop)
 
-		while  abs(BP.get_motor_encoder(motorPort)) <= turnDegree:
-			BP.set_motor_power(motorPort, power)
-			BP.set_motor_power(motorPort_stop, 0)
-
-		BP.set_motor_power(motorPort, 0)
-		time.sleep(0.1)
 
