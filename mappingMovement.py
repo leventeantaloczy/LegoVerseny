@@ -137,7 +137,3 @@ class Movement:
 
 		time.sleep(0.1)
 
-
-
-
-

@@ -5,6 +5,7 @@ from builtins import input
 from dataStructure import *
 from mappingMovement import *
 from constans import *
+from matrixCalc import *
 
 BP = brickpi3.BrickPi3()
 rampUp = False
