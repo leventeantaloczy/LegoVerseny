@@ -11,9 +11,9 @@
 #--------------------------------------------------------------------------------------#
 
 
-redZoneX = 1
-greenZoneX = 2
-blueZoneX = 3
+redZoneX = 1		#piros ledobo zona X koordinata
+greenZoneX = 2		#zold -||-
+blueZoneX = 3		#kek -||-
 
 speed = -50
 turnSpeed = -50
