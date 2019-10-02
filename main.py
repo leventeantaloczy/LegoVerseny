@@ -31,7 +31,7 @@ try:
 				print(Matrix[y][x])
 			except brickpi3.SensorError as error:
 				print(error)
-			#move.motorRotateDegree(BP.PORT_D, BP.PORT_A, wheelRotateDegree, speed, BP, rampUp)
+			move.motorRotateDegree(BP.PORT_D, BP.PORT_A, wheelRotateDegree, speed, BP, rampUp)
 			rampUp = False
 		if(y % 2 == 0):
 			print("in if 0")
@@ -41,7 +41,7 @@ try:
 				print(Matrix[y][x + 1])
 			except brickpi3.SensorError as error:
 				print(error)
-			#move.oneMotorTurn(BP.PORT_D, BP.PORT_A, ninetyDegreeTurn, turnSpeed, BP)
+			move.oneMotorTurn(BP.PORT_D, BP.PORT_A, ninetyDegreeTurn, turnSpeed, BP)
 		else:
 			print("in if 1")
 			try:
@@ -50,7 +50,7 @@ try:
 				print(Matrix[y][x + 1])
 			except brickpi3.SensorError as error:
 				print(error)
-			#move.oneMotorTurn(BP.PORT_A, BP.PORT_D, ninetyDegreeTurn, turnSpeed, BP)
+			move.oneMotorTurn(BP.PORT_A, BP.PORT_D, ninetyDegreeTurn, turnSpeed, BP)
 
 except KeyboardInterrupt:																								#TODO forduljon az x iteracio utan
 	BP.reset_all()
