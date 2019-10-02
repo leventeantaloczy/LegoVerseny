@@ -16,7 +16,7 @@ color = ["none", "Black", "Blue", "Green", "Yellow", "Red", "White", "Brown"]
 
 for i in range(h + 1):
 	for j in range(w + 1):
-			Matrix[i][j] = -1
+			Matrix[i][j] = 6
 	
 time.sleep(3)
 
@@ -27,40 +27,45 @@ try:
 				rampUp = True										#forward 10cm with 230 degree
 			try:
 				value = BP.get_sensor(BP.PORT_1)																	#TODO: szinszenzor itt olvasson be a mx-ba 															
-				Matrix[y][x] = color[value]
+				Matrix[y][x] = value
 				print(Matrix[y][x])
 			except brickpi3.SensorError as error:
 				print(error)
-			move.motorRotateDegree(BP.PORT_D, BP.PORT_A, wheelRotateDegree, speed, BP, rampUp)
+			#move.motorRotateDegree(BP.PORT_D, BP.PORT_A, wheelRotateDegree, speed, BP, rampUp)
 			rampUp = False
 		if(y % 2 == 0):
 			print("in if 0")
 			try:
 				value = BP.get_sensor(BP.PORT_1)																	#TODO: szinszenzor itt olvasson be a mx-ba 															
-				Matrix[y][x + 1] = color[value]
+				Matrix[y][x + 1] = value
 				print(Matrix[y][x + 1])
 			except brickpi3.SensorError as error:
 				print(error)
-			move.oneMotorTurn(BP.PORT_D, BP.PORT_A, ninetyDegreeTurn, turnSpeed, BP)
+			#move.oneMotorTurn(BP.PORT_D, BP.PORT_A, ninetyDegreeTurn, turnSpeed, BP)
 		else:
 			print("in if 1")
 			try:
 				value = BP.get_sensor(BP.PORT_1)																	#TODO: szinszenzor itt olvasson be a mx-ba 															
-				Matrix[y][x + 1] = color[value]
+				Matrix[y][x + 1] = value
 				print(Matrix[y][x + 1])
 			except brickpi3.SensorError as error:
 				print(error)
-			move.oneMotorTurn(BP.PORT_A, BP.PORT_D, ninetyDegreeTurn, turnSpeed, BP)
+			#move.oneMotorTurn(BP.PORT_A, BP.PORT_D, ninetyDegreeTurn, turnSpeed, BP)
 
 except KeyboardInterrupt:																								#TODO forduljon az x iteracio utan
 	BP.reset_all()
 
-f = open("mx.txt", "w+")
+Matrix = fillMatrixRandom(Matrix)
+printMatrix(Matrix)
+Matrix = processRawMatrix(Matrix)
+printMatrix(Matrix)
+print(calculatePath(Matrix))
 
+f = open("mx.txt", "w+")
 
 for y in range(h + 1):
 	for x in range(w + 1):
-		f.write("%s " %Matrix[y][x])
+		f.write("%s " %color[Matrix[y][x]])
 	f.write("\r\n")
 	
 f.close()
