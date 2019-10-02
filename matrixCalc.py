@@ -5,61 +5,138 @@ from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
 from dataStructure import *
+from constans import *
 
-
-
-class Matrix:
+#class-t kivettem mert problemazott mindig a selffel, pls fix -T
 		
+def filterMatrixByColor(Matrix, color): #egyelore nem hasznaljuk, de lehet meg jol johet: csak a megadott szineket hagyja bent, a tobbi fal
+	h = len(Matrix)
+	w = len(Matrix[0])
+	filteredMatrix = [[0 for x in range(w)] for y in range(h)]
+	for y in range(h):
+		for x in range(w):
+			item = Matrix[y][x]
+			if(item != color and item != 1):
+				filteredMatrix[y][x] = 0
+			else:
+				filteredMatrix[y][x] = 1
+	return filteredMatrix
 
-	def filterMatrixByColor(self, Matrix, color):
-		h = len(Matrix)
-		w = len(Matrix[0])
-		filteredMatrix = [[0 for x in range(w)] for y in range(h)]
-		for y in range(h):
-			for x in range(w):
-				item = Matrix[y][x]
-				if(item != color and item != 1):
-					filteredMatrix[y][x] = 0
-				else:
-					filteredMatrix[y][x] = 1
-		return filteredMatrix
 
+def separateMatricesByEnd(Matrix): # osmatrix a bemenet, unicolorra alakit, visszaadja az ertekes szinu matrixokat es a hozzajuk tartozo celkoordinatakat
+	h = len(Matrix)
+	w = len(Matrix[0])
+	coloredItemSum = 0;
+	filteredMatrix = [[0 for x in range(w)] for y in range(h)]
+	for y in range(h):
+		for x in range(w):
+			item = Matrix[y][x]
+			if(item > 1 and item != 4):
+				filteredMatrix[y][x] = 2
+				coloredItemSum += 1
+			elif(item == 4):
+				filteredMatrix[y][x] = 0
+			else:
+				filteredMatrix[y][x] = item
+	matrixArray = [[[0 for x in range(w)] for y in range(h)] for z in range(coloredItemSum)]
+	endCoords = [0 for x in range(coloredItemSum * 2)]
+	for i in range(coloredItemSum):
+		matrixArray[i], endCoords[i * 2], endCoords[i * 2 + 1] = leaveOneEnd(filteredMatrix, i)
 
-	def filterMatrixToUnicolor(self, Matrix):
-		h = len(Matrix)
-		w = len(Matrix[0])
-		filteredMatrix = [[0 for x in range(w)] for y in range(h)]
-		for y in range(h):
-			for x in range(w):
-				item = Matrix[y][x]
-				if(item > 1):
+	return matrixArray, endCoords
+
+def getZoneX(Matrix, endCoords): #megszerzi a cel mezo szinet es visszaadja a megfelelo szinu zona X koordinatajat (pythonban nincs switch :/ )
+	item = Matrix[endCoords[1]][endCoords[0]]
+	if(item == 2):
+		return blueZoneX
+	if(item == 3):
+		return greenZoneX
+	if(item == 5):
+		return redZoneX
+
+def leaveOneEnd(Matrix, which): #unicolor matrixban bent hagyja a megadott sorszamu ertekes celt, a tobbit falla alakitja es visszaadja az igy kapott matrixot es a celkoordinatat
+	h = len(Matrix)
+	w = len(Matrix[0])
+	number = 0
+	outX = 0
+	outY = 0
+	filteredMatrix = [[0 for x in range(w)] for y in range(h)]
+	for y in range(h):
+		for x in range(w):
+			item = Matrix[y][x]
+			if(item == 2):
+				if(number == which):
 					filteredMatrix[y][x] = 2
+					outX = x
+					outY = y
 				else:
-					filteredMatrix[y][x] = Matrix[y][x]
-		return filteredMatrix
+					filteredMatrix[y][x] = 0
+				number += 1
+			else:
+				filteredMatrix[y][x] = item
+	return filteredMatrix, outX, outY
 
 
-	def numberOfItems(self, Matrix):
-		h = len(Matrix)
-		w = len(Matrix[0])
-		sum = 0
-		for y in range(h):
-			for x in range(w):
-				if(Matrix[y][x] > 1):
-					sum += 1
-		return sum
+def numberOfItems(Matrix): #ELAVULT, nem hasznaljuk, integralva lett separateMatricesEnd-be
+	h = len(Matrix)
+	w = len(Matrix[0])
+	sum = 0
+	for y in range(h):
+		for x in range(w):
+			if(Matrix[y][x] > 1):
+				sum += 1
+	return sum
 
-	def astar(self, Matrix, startX, startY, endX, endY):
+def astar(Matrix, startX, startY, endX, endY): #A* legrovidebb utvonalkereso
 
-		grid = Grid(Matrix = Matrix)
+	grid = Grid(matrix = Matrix)
 
-		start = grid.node(startX, startY)
-		end = grid.node(endX, endY)
+	start = grid.node(startX, startY)
+	end = grid.node(endX, endY)
 
-		finder = AStarFinder(diagonal_movement = DiagonalMovement.never)
+	finder = AStarFinder(diagonal_movement = DiagonalMovement.never)
 
-		path, runs = finder.find_path(start, end, grid)
+	path, runs = finder.find_path(start, end, grid)
+	print(grid.grid_str(path = path, start = start, end = end)) #kirajzolast visszaraktam a szemleletesseg kedveert -T
 
-		return path
+	return path
+
+matrix2 = [			#pelda matrix
+	[1,1,1,1,1],
+	[2,1,1,2,1],
+	[1,3,1,4,1],
+	[1,1,1,5,1],
+	[1,1,2,4,1]
+]
+
+matrix = [			#pelda matrix
+	[1,1,1,1,1,1,1,1,1,1,1],
+	[2,1,1,2,1,1,2,3,4,1,2],
+	[1,3,1,4,1,2,1,4,1,1,1],
+	[1,1,1,5,1,1,3,4,1,5,1],
+	[1,1,2,4,1,2,1,4,3,1,1],
+	[1,1,1,1,1,1,1,1,1,1,1],
+	[2,1,1,2,1,1,2,3,4,1,2],
+	[1,3,1,4,1,2,1,4,1,1,1],
+	[1,1,1,5,1,1,3,4,1,5,1],
+	[1,1,2,4,1,2,1,4,3,1,1],
+	[1,1,1,5,1,1,3,4,1,5,1]
+]
+
+def calculatePath(matrix): #az osmatrixban megkeresi a legrovidebb uton eljuttathato poharat. Nem koltseges, 11*11-es matrixnal egy pillanat alatt lefut.
+
+	finalMatrices, endCoords = separateMatricesByEnd(matrix)
+	shortestPath = [0 for x in range(h * w)]
+	for i in range(len(finalMatrices)):
+		currentPathStart = astar(finalMatrices[i], 0, h - 1, endCoords[i * 2], endCoords[i * 2 + 1])										#utvonal starttol poharig
+		currentPathZone = astar(finalMatrices[i], endCoords[i * 2], endCoords[i * 2 + 1], getZoneX(matrix, endCoords), 0) 					#utvonal pohartol zonaig
+		if(len(currentPathStart) + len(currentPathZone) < len(shortestPath) and len(currentPathStart) != 0 and len(currentPathZone) != 0):	#ha rovidebb a teljes ut es egyik sem lehetetlen
+			currentPathStart.extend(currentPathZone)
+			shortestPath = currentPathStart
+	return shortestPath					#a Start path vege es a Zone path eleje ugyan az a mezo, tehat duplikalva van benne, de nem baj, ekkor fogja tudni a robi h a poharnal van
+
+print(calculatePath(matrix)) #TODO: ezt kell atforditani parancssorozatta a robinak
+
+
 
 
