@@ -10,9 +10,6 @@ class PID:
 		BP.reset_motor_encoder(BP.PORT_A)
 		BP.reset_motor_encoder(BP.PORT_B)
 
-		
-
-
 
 		e1_prev_error = 0
 		e2_prev_error = 0
