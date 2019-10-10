@@ -23,3 +23,9 @@ waitSecs = 0.4
 rampDown = 150
 glassTrace = 400
 closeDist = 12
+
+KP = 0.01
+KI = 0.0001
+KD = 0.01
+SAMPLETIME = 0.5
+TARGET = 255
