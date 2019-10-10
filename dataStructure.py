@@ -13,7 +13,7 @@ class Color(Enum):
 
 
 
-w = 10																															#width
-h = 10																															#height
+w = 5																															#width
+h = 5																															#height
 Matrix = [[Color.DEFAULT.name for x in range(w + 1)] for y in range(h + 1)]																# 7x7 matrix initialization 
 

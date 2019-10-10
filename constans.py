@@ -1,4 +1,4 @@
-#--------------------------------------------------------------------------------------#
+ #--------------------------------------------------------------------------------------#
 #                                                                                      #
 #                                                                                      #
 #                                                                                      #
@@ -15,7 +15,7 @@ redZoneX = 1		#piros ledobo zona X koordinata
 greenZoneX = 2		#zold -||-
 blueZoneX = 3		#kek -||-
 
-speed = -50
-turnSpeed = -50
-wheelRotateDegree = 400 #323
-ninetyDegreeTurn = 1395 #375 1500
+speed = -55
+turnSpeed = 50
+wheelRotateDegree = 900 
+turnTime = 1.3			#800 - 6.4 cm #850 az ideal

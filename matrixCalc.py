@@ -28,20 +28,22 @@ def filterMatrixByColor(Matrix, color): #egyelore nem hasznaljuk, de lehet meg j
 
 
 def separateMatricesByEnd(Matrix): # osmatrix a bemenet, unicolorra alakit, visszaadja az ertekes szinu matrixokat es a hozzajuk tartozo celkoordinatakat
+	print("flippedMatrix")
+	printMatrix(Matrix)
 	h = len(Matrix)
 	w = len(Matrix[0])
 	coloredItemSum = 0;
 	filteredMatrix = [[0 for x in range(w)] for y in range(h)]
 	for y in range(h):
 		for x in range(w):
-			item = Matrix[y][x]
-			if(item != 4 and item != 6):
-				filteredMatrix[y][x] = 2
-				coloredItemSum += 1
-			elif(item == 4):
-				filteredMatrix[y][x] = 0
-			else:
-				filteredMatrix[y][x] = 1
+				item = Matrix[y][x]
+				if(item != 4 and item != 6):
+					filteredMatrix[y][x] = 2
+					coloredItemSum += 1
+				elif(item == 4):
+					filteredMatrix[y][x] = 0
+				else:
+					filteredMatrix[y][x] = 1
 	printMatrix(filteredMatrix)
 	matrixArray = [[[0 for x in range(w)] for y in range(h)] for z in range(coloredItemSum)]
 	endCoords = [0 for x in range(coloredItemSum * 2)]
@@ -51,7 +53,7 @@ def separateMatricesByEnd(Matrix): # osmatrix a bemenet, unicolorra alakit, viss
 	return matrixArray, endCoords
 
 def getZoneX(Matrix, endCoords): #megszerzi a cel mezo szinet es visszaadja a megfelelo szinu zona X koordinatajat (pythonban nincs switch :/ )
-	item = Matrix[endCoords[1]][endCoords[0]]
+	item = Matrix[endCoords[1] - 1][endCoords[0]]
 	if(item == 2):
 		return blueZoneX
 	if(item == 3):
@@ -73,7 +75,10 @@ def leaveOneEnd(Matrix, which): #unicolor matrixban bent hagyja a megadott sorsz
 				if(number == which):
 					filteredMatrix[y][x] = 2
 					outX = x
-					outY = y
+					if(y + 1 > h - 1):
+						outY = y
+					else:
+						outY = y + 1
 				else:
 					filteredMatrix[y][x] = 0
 				number += 1
@@ -103,6 +108,8 @@ def printMatrix(Matrix):
 
 
 def processRawMatrix(Matrix):
+	print("RAW Matrix")
+	printMatrix(Matrix)
 	nMatrix = np.array(Matrix)
 	for i in range(1, h, 2):
 		nMatrix[i] = np.flip(nMatrix[i], 0)
