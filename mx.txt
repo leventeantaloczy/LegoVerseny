@@ -1,0 +1,10 @@
+White White White White White White White White White White 
+White Blue Blue Yellow Yellow White White White White Blue 
+White White White Yellow Yellow White White White White Blue  
+White White Red Yellow Yellow Red White White White Blue  
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
