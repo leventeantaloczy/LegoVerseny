@@ -9,13 +9,17 @@
 #                                                                                      #
 #                                                                                      #
 #--------------------------------------------------------------------------------------#
+from dataStructure import *
 
+redZoneX = 3	#piros ledobo zona X koordinata
+greenZoneX = 6		#zold -||-
+blueZoneX = 9		#kek -||-
 
-redZoneX = 1		#piros ledobo zona X koordinata
-greenZoneX = 2		#zold -||-
-blueZoneX = 3		#kek -||-
-
-speed = -55
-turnSpeed = 50
-wheelRotateDegree = 900 
-turnTime = 1.3			#800 - 6.4 cm #850 az ideal
+speed = -65
+turnSpeed = 80
+wheelRotateDegree = 910 
+turnTime = 0.8			#800 - 6.4 cm #850 az ideal
+waitSecs = 0.4
+rampDown = 150
+glassTrace = 400
+closeDist = 12

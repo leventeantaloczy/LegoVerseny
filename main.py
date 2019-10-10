@@ -10,10 +10,11 @@ from matrixCalc import *
 from movementSolve import *
 
 BP = brickpi3.BrickPi3()
-rampUp = False
+rampUp = 0
 move = Movement()
 
-BP.set_sensor_type(BP.PORT_2, BP.SENSOR_TYPE.EV3_COLOR_COLOR)															#A - bal, D - jobb motor
+BP.set_sensor_type(BP.PORT_2, BP.SENSOR_TYPE.EV3_COLOR_COLOR)
+BP.set_sensor_type(BP.PORT_4, BP.SENSOR_TYPE.EV3_ULTRASONIC_CM)																#A - bal, D - jobb motor
 color = ["none", "Black", "Blue", "Green", "Yellow", "Red", "White", "Brown"]
 
 for i in range(h + 1):
@@ -23,10 +24,10 @@ for i in range(h + 1):
 time.sleep(3)
 
 try:
-	for y in range(h + 1):
+	for y in range(h):
 		for x in range(w):
 			if(x == 0):
-				rampUp = True
+				rampUp = 15
 
 			try:
 				value = BP.get_sensor(BP.PORT_2)																	#TODO: szinszenzor itt olvasson be a mx-ba 															
@@ -36,35 +37,51 @@ try:
 				print(error)
 
 			if(y % 2 == 0):
-				move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, rampUp)
-			else:
-				move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, rampUp)
-			rampUp = False
-		if(y % 2 == 0):
-			try:
-				value = BP.get_sensor(BP.PORT_2)																	#TODO: szinszenzor itt olvasson be a mx-ba 															
-				Matrix[y][x] = value
-				print(Matrix[y][x + 1])
-			except brickpi3.SensorError as error:
-				print(error)
-			move.centralTurnSec(BP.PORT_C, turnTime, -turnSpeed, BP)
-			time.sleep(0.2)
-			move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, True)
-			move.centralTurnSec(BP.PORT_C, turnTime, turnSpeed, BP) #1.3 @50
-			time.sleep(0.2)
+				if(x >= w - 1):
+					move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, wheelRotateDegree -rampDown, speed, BP, 0)
+					move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, rampDown, -20, BP, 0)
+				else:
+					move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, rampUp)
 
-		else:
-			try:
-				value = BP.get_sensor(BP.PORT_2)																	#TODO: szinszenzor itt olvasson be a mx-ba 															
-				Matrix[y][x] = value
-				print(Matrix[y][x + 1])
-			except brickpi3.SensorError as error:
-				print(error)
-			move.centralTurnSec(BP.PORT_C, turnTime, -turnSpeed, BP)
-			time.sleep(0.2)
-			move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, True)
-			move.centralTurnSec(BP.PORT_C, turnTime, turnSpeed, BP)
-			time.sleep(0.2)
+			else:
+				if(x >= w - 1):
+					move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree -rampDown, speed, BP, 0)
+					move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, rampDown, -20, BP, 0)
+				else:
+					move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, rampUp)
+			rampUp = 0
+		if(y < h):
+			if(y % 2 == 0):
+				try:
+					value = BP.get_sensor(BP.PORT_2)																	#TODO: szinszenzor itt olvasson be a mx-ba 															
+					Matrix[y][x] = value
+					print(Matrix[y][x + 1])
+				except brickpi3.SensorError as error:
+					print(error)
+				time.sleep(waitSecs)
+				move.centralTurnSec(BP.PORT_C, turnTime, -turnSpeed, BP)
+				time.sleep(waitSecs)
+				move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree - rampDown, speed, BP, 15)
+				move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, rampDown, -20, BP, 0)
+				time.sleep(waitSecs)
+				move.centralTurnSec(BP.PORT_C, turnTime, turnSpeed, BP) #1.3 @50
+				time.sleep(waitSecs)
+
+			else:
+				try:
+					value = BP.get_sensor(BP.PORT_2)																	#TODO: szinszenzor itt olvasson be a mx-ba 															
+					Matrix[y][x] = value
+					print(Matrix[y][x + 1])
+				except brickpi3.SensorError as error:
+					print(error)
+				time.sleep(waitSecs)
+				move.centralTurnSec(BP.PORT_C, turnTime, -turnSpeed, BP)
+				time.sleep(waitSecs)
+				move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree - rampDown, speed, BP, 15)
+				move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, rampDown, -20, BP, 0)
+				time.sleep(waitSecs)
+				move.centralTurnSec(BP.PORT_C, turnTime, turnSpeed, BP)
+				time.sleep(waitSecs)
 
 except KeyboardInterrupt:
 	BP.reset_all()
@@ -78,7 +95,7 @@ f = open("mx.txt", "w+")
 
 for y in range(h + 1):
 	for x in range(w + 1):
-		f.write("%s " %color[Matrix[y][x]])
+		f.write("%d " %Matrix[y][x])
 	f.write("\r\n")
 	
 f.close()
