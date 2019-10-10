@@ -8,7 +8,6 @@ from mappingMovement import *
 from constans import *
 from matrixCalc import *
 from movementSolve import *
-from PID import *
 
 BP = brickpi3.BrickPi3()
 rampUp = 0
@@ -24,9 +23,6 @@ for i in range(h + 1):
 	
 time.sleep(3)
 
-<<<<<<< HEAD
-p = PID()
-=======
 try:
 	for y in range(h):
 		for x in range(w):
@@ -86,15 +82,10 @@ try:
 				time.sleep(waitSecs)
 				move.centralTurnSec(BP.PORT_C, turnTime, turnSpeed, BP)
 				time.sleep(waitSecs)
->>>>>>> 9f9553f3cf2e265519e6b3d1c2f7c04cdac6060
 
-try:
-	p.go(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP)
 except KeyboardInterrupt:
 	BP.reset_all()
 
-<<<<<<< HEAD
-=======
 var = raw_input()
 
 
@@ -109,9 +100,8 @@ for y in range(h + 1):
 	
 f.close()
 
->>>>>>> 9f9553f3cf2e265519e6b3d1c2f7c04cdac60609
 BP.reset_all()
 
 
 
-#move.centralTurnSec(BP.PORT_C, 1.3, -50, BP) 
+#move.centralTurnSec(BP.PORT_C, 1.3, -50, BP)

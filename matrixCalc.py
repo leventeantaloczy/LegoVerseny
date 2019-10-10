@@ -60,6 +60,8 @@ def getZoneX(Matrix, endCoords): #megszerzi a cel mezo szinet es visszaadja a me
 		return greenZoneX
 	if(item == 5):
 		return redZoneX
+	else:
+		return blueZoneX #temp
 
 def leaveOneEnd(Matrix, which): #unicolor matrixban bent hagyja a megadott sorszamu ertekes celt, a tobbit falla alakitja es visszaadja az igy kapott matrixot es a celkoordinatat
 	h = len(Matrix)

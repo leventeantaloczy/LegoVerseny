@@ -47,19 +47,19 @@ class Movement:
 
 		time.sleep(0.01)
 
-	def motorRotateDegreeNewB(self, motorPort_1, motorPort_2, degrees, power, BP, rampUpBoolean):															#egyenseben tarto fuggveny
+	def motorRotateDegreeNewB(self, motorPort_1, motorPort_2, degrees, power, BP, rampUpSteps):															#egyenseben tarto fuggveny
 
 			power_1 = -power
 			power_2 = power
 
-			powerInc1 = power_1 / 10
-			powerInc2 = power_2 / 10
 			BP.reset_motor_encoder(motorPort_1)
 			BP.reset_motor_encoder(motorPort_2)
-			if(rampUpBoolean):
-				power_1 /= 10
-				power_2 /= 10
-				for i in range(9):
+			if(rampUpSteps > 1):
+				powerInc1 = power_1 / rampUpSteps
+				powerInc2 = power_2 / rampUpSteps
+				power_1 /= rampUpSteps
+				power_2 /= rampUpSteps
+				for i in range(rampUpSteps - 1):
 					BP.set_motor_power(motorPort_1, power_1)
 					BP.set_motor_power(motorPort_2, power_2)
 					time.sleep(0.05)
@@ -74,11 +74,11 @@ class Movement:
 				#print("Power1 ", power_1, "Power2: ", power_2)	
 
 				if(abs(BP.get_motor_encoder(motorPort_2)) - abs(BP.get_motor_encoder(motorPort_1)) > 0):									#A-D
-					if(power_1 > power * 1.1):
+					if(abs(power_1) < abs(power * 1.1)):
 						power_1 += 1
 
 				elif(abs(BP.get_motor_encoder(motorPort_1)) - abs(BP.get_motor_encoder(motorPort_2)) > 0):									#D-A
-					if(power_2 < power * 1.1):
+					if(abs(power_2) < abs(power * 1.1)):
 						power_2 -= 1
 
 				else:
@@ -87,19 +87,18 @@ class Movement:
 
 			time.sleep(0.01)
 
-	def motorRotateDegreeNewF(self, motorPort_1, motorPort_2, degrees, power, BP, rampUpBoolean):															#egyenseben tarto fuggveny
+	def motorRotateDegreeNewF(self, motorPort_1, motorPort_2, degrees, power, BP, rampUpSteps):															#egyenseben tarto fuggveny
 
 				power_1 = power
 				power_2 = -power
-
-				powerInc1 = power_1 / 10
-				powerInc2 = power_2 / 10
 				BP.reset_motor_encoder(motorPort_1)
 				BP.reset_motor_encoder(motorPort_2)
-				if(rampUpBoolean):
-					power_1 /= 10
-					power_2 /= 10
-					for i in range(9):
+				if(rampUpSteps > 0):
+					powerInc1 = power_1 / rampUpSteps
+					powerInc2 = power_2 / rampUpSteps
+					power_1 /= rampUpSteps
+					power_2 /= rampUpSteps
+					for i in range(rampUpSteps - 1):
 						#print("Pow1: ", power_1, "Pow2: ", power_2)
 						BP.set_motor_power(motorPort_1, power_1)
 						BP.set_motor_power(motorPort_2, power_2)
@@ -107,21 +106,22 @@ class Movement:
 						power_1 += powerInc1
 						power_2 += powerInc2
 
+				print("Forward \n\r __________________________")
+
 
 				while abs(BP.get_motor_encoder(motorPort_1)) <= degrees and abs(BP.get_motor_encoder(motorPort_2)) <= degrees:
 
 					BP.set_motor_power(motorPort_1, power_1)
 					BP.set_motor_power(motorPort_2, power_2)
-					#print("Encoder1 ", BP.get_motor_encoder(motorPort_1), "Encoder2: ", BP.get_motor_encoder(motorPort_2))
-					#print("Power1 ", power_1, "Power2: ", power_2)	
+					print("Encoder1 % 3d Encoder2 % 3d power_1 % 3d power_2 % 3d" %(BP.get_motor_encoder(motorPort_1), BP.get_motor_encoder(motorPort_2), power_1, power_2))
 
 					if(abs(BP.get_motor_encoder(motorPort_2)) - abs(BP.get_motor_encoder(motorPort_1)) > 0):
 																						#A-D
-						if(power_1 > power * 1.1):
+						if(abs(power_1) < abs(power * 1.1)):
 							power_1 -= 1
 
 					elif(abs(BP.get_motor_encoder(motorPort_1)) - abs(BP.get_motor_encoder(motorPort_2)) > 0):									#D-A
-						if(power_2 < power * 1.1):
+						if(abs(power_2) < abs(power * 1.1)):
 							power_2 += 1
 
 					else:
@@ -230,9 +230,9 @@ class Movement:
 		BP.reset_motor_encoder(BP.PORT_B)
 		BP.set_motor_power(Port, power)
 		if(power < 0):
-			bigPower = 12
+			bigPower = 19
 		else:
-			bigPower = -12
+			bigPower = -19
 		BP.set_motor_power(BP.PORT_A, bigPower)
 		BP.set_motor_power(BP.PORT_B, bigPower)
 		startTime = time.time()
@@ -252,4 +252,10 @@ class Movement:
 		BP.set_motor_power(BP.PORT_A, 0)
 		BP.set_motor_power(BP.PORT_B, 0)
 		BP.set_motor_power(Port, 0)
-		time.sleep(1)
+		time.sleep(0.1)
+
+	def stopMotors(self, BP):
+		BP.set_motor_power(BP.PORT_B, 0)
+		BP.set_motor_power(BP.PORT_A, 0)
+		BP.set_motor_power(BP.PORT_C, 0)
+
