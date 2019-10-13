@@ -50,7 +50,7 @@ class Movement:
 	def motorRotateDegreeNewB(self, motorPort_1, motorPort_2, degrees, power, BP, rampUpSteps):															#egyenseben tarto fuggveny
 
 			power_1 = -power
-			power_2 = power
+			power_2 = -power
 
 			BP.reset_motor_encoder(motorPort_1)
 			BP.reset_motor_encoder(motorPort_2)
@@ -79,18 +79,18 @@ class Movement:
 
 				elif(abs(BP.get_motor_encoder(motorPort_1)) - abs(BP.get_motor_encoder(motorPort_2)) > 0):									#D-A
 					if(abs(power_2) < abs(power * 1.1)):
-						power_2 -= 1
+						power_2 += 1
 
 				else:
 					power_1 = -power
-					power_2 = power
+					power_2 = -power
 
 			time.sleep(0.01)
 
 	def motorRotateDegreeNewF(self, motorPort_1, motorPort_2, degrees, power, BP, rampUpSteps):															#egyenseben tarto fuggveny
 
 				power_1 = power
-				power_2 = -power
+				power_2 = power
 				BP.reset_motor_encoder(motorPort_1)
 				BP.reset_motor_encoder(motorPort_2)
 				if(rampUpSteps > 0):
@@ -113,7 +113,7 @@ class Movement:
 
 					BP.set_motor_power(motorPort_1, power_1)
 					BP.set_motor_power(motorPort_2, power_2)
-					print("Encoder1 % 3d Encoder2 % 3d power_1 % 3d power_2 % 3d" %(BP.get_motor_encoder(motorPort_1), BP.get_motor_encoder(motorPort_2), power_1, power_2))
+					#print("Encoder1 % 3d Encoder2 % 3d power_1 % 3d power_2 % 3d" %(BP.get_motor_encoder(motorPort_1), BP.get_motor_encoder(motorPort_2), power_1, power_2))
 
 					if(abs(BP.get_motor_encoder(motorPort_2)) - abs(BP.get_motor_encoder(motorPort_1)) > 0):
 																						#A-D
@@ -122,10 +122,10 @@ class Movement:
 
 					elif(abs(BP.get_motor_encoder(motorPort_1)) - abs(BP.get_motor_encoder(motorPort_2)) > 0):									#D-A
 						if(abs(power_2) < abs(power * 1.1)):
-							power_2 += 1
+							power_2 -= 1
 
 					else:
-						power_2 = -power
+						power_2 = power
 						power_1 = power
 
 				time.sleep(0.01)
@@ -243,7 +243,7 @@ class Movement:
 			if(time.time() - startTime >= seconds):
 				#print("behatoltam kozepesen")
 				BP.set_motor_power(Port, 0)
-			if(abs(BP.get_motor_encoder(BP.PORT_A)) >= 90):
+			if(abs(BP.get_motor_encoder(BP.PORT_A)) >= 180):
 				#print("behatoltam nagyonA")
 				BP.set_motor_power(BP.PORT_A, 0)
 			if(abs(BP.get_motor_encoder(BP.PORT_B)) >= 90):

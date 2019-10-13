@@ -38,14 +38,14 @@ try:
 
 			if(y % 2 == 0):
 				if(x >= w - 1):
-					move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, wheelRotateDegree -rampDown, speed, BP, 0)
+					move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, wheelRotateDegree - rampDown, speed, BP, 0)
 					move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, rampDown, -20, BP, 0)
 				else:
 					move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, rampUp)
 
 			else:
 				if(x >= w - 1):
-					move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree -rampDown, speed, BP, 0)
+					move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree - rampDown, speed, BP, 0)
 					move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, rampDown, -20, BP, 0)
 				else:
 					move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, rampUp)

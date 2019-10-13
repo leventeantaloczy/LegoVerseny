@@ -3,10 +3,11 @@ import brickpi3
 from constans import *
 from mappingMovement import *
 
+move = Movement()
 
 class PID:
 
-	def go(self, motortPort_1, motortPort_2, degree, speed, BP):
+	def go(self, motortPort_1, motortPort_2, degree, power, BP):
 		BP.reset_motor_encoder(BP.PORT_A)
 		BP.reset_motor_encoder(BP.PORT_B)
 
@@ -19,6 +20,9 @@ class PID:
 
 		motor_1_sum = 0
 		motor_2_sum = 0
+
+		power_1 = power
+		power_2 = power
 
 		try:
 			while(motor_1_sum <= degree and motor_2_sum <= degree):
@@ -39,7 +43,7 @@ class PID:
 
 
 				BP.set_motor_power(motortPort_1, -power_1 if power < 0 else power_1)
-				BP.set_motor_power(motortPort_2, power_2 if power < 0 else power_1)
+				BP.set_motor_power(motortPort_2, power_2 if power < 0 else -power_2)
 
 				print("e1 {} e2 {}".format(e1, e2))
 				print("m1 {} m2 {}".format(power_1, power_2))
