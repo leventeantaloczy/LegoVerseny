@@ -15,4 +15,4 @@ class Color(Enum):
 
 w = 10																															#width
 h = 10																													#height
-Matrix = [[Color.DEFAULT.name for x in range(w + 1)] for y in range(h + 1)]																# matrix initialization 
+Matrix = [[0 for x in range(w + 1)] for y in range(h + 1)]																# matrix initialization 

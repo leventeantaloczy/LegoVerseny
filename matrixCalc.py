@@ -12,18 +12,22 @@ import numpy as np
 
 #class-t kivettem mert problemazott mindig a selffel, pls fix -T
 		
-def filterMatrixByColor(Matrix, color): #egyelore nem hasznaljuk, de lehet meg jol johet: csak a megadott szineket hagyja bent, a tobbi fal
+def deleteColorFromMatrix(Matrix, color): #megadott szint alakit at jarhato utta egy matrixban.
+	print("COLOR BEFORE:")
+	print("Color: ", color)
+	printMatrix(Matrix)
 	h = len(Matrix)
 	w = len(Matrix[0])
 	filteredMatrix = [[0 for x in range(w)] for y in range(h)]
 	for y in range(h):
 		for x in range(w):
 			item = Matrix[y][x]
-			if(item != color and item != 1):
-				filteredMatrix[y][x] = 0
+			if(item == color):
+				filteredMatrix[y][x] = 6;
 			else:
-				filteredMatrix[y][x] = 1
-
+				filteredMatrix[y][x] = item;
+	print("COLOR DELETED:")
+	printMatrix(filteredMatrix)
 	return filteredMatrix
 
 
@@ -52,8 +56,12 @@ def separateMatricesByEnd(Matrix): # osmatrix a bemenet, unicolorra alakit, viss
 
 	return matrixArray, endCoords
 
-def getZoneX(Matrix, endCoords): #megszerzi a cel mezo szinet es visszaadja a megfelelo szinu zona X koordinatajat (pythonban nincs switch :/ )
-	item = Matrix[endCoords[1] - 1][endCoords[0]]
+def getZoneX(Matrix, endCoords, i): #megszerzi a cel mezo szinet es visszaadja a megfelelo szinu zona X koordinatajat (pythonban nincs switch :/ )
+	item = Matrix[endCoords[i * 2 + 1] - 1][endCoords[i * 2]]
+	print("get Zone Matrix: ")
+	printMatrix(Matrix)
+	print("chosen colour: ", item)
+	print("Y: %d X: %d" %(endCoords[i * 2 + 1] - 1, endCoords[i * 2]))
 	if(item == 2):
 		return blueZoneX
 	if(item == 3):
@@ -99,7 +107,7 @@ def numberOfItems(Matrix): #ELAVULT, nem hasznaljuk, integralva lett separateMat
 				sum += 1
 	return sum
 
-def printMatrix(Matrix):
+def printMatrix(Matrix):	#szimpla matrix kiiratas, szepen
 	h = len(Matrix)
 	w = len(Matrix[0])
 	for y in range(h):
@@ -109,15 +117,16 @@ def printMatrix(Matrix):
 	print("")
 
 
-def processRawMatrix(Matrix):
+def processRawMatrix(Matrix):	#robot altal beolvasott nyers matrixot valtottsoroz es flippel horizontalisan -> valos map
 	print("RAW Matrix")
 	printMatrix(Matrix)
 	nMatrix = np.array(Matrix)
 	for i in range(1, h, 2):
 		nMatrix[i] = np.flip(nMatrix[i], 0)
 	nMatrix = np.flipud(nMatrix)
-	return nMatrix.tolist()
-
+	flippedMatrix = [[0 for x in range(len(Matrix[0]))] for y in range(len(Matrix))]
+	flippedMatrix =	nMatrix.tolist()
+	return flippedMatrix
 
 
 def astar(Matrix, startX, startY, endX, endY): #A* legrovidebb utvonalkereso
@@ -156,22 +165,31 @@ matrix = [
 	[1,1,1,1,1,1,1,1,1,1,1]
 ]
 
-def calculatePath(matrix): #az osmatrixban megkeresi a legrovidebb uton eljuttathato poharat. Nem koltseges, 11*11-es matrixnal egy pillanat alatt lefut.
-
-	finalMatrices, endCoords = separateMatricesByEnd(matrix)
+def calculatePath(matrix, startX, startY): #az osmatrixban megkeresi a legrovidebb uton eljuttathato poharat. Nem koltseges, 11*11-es matrixnal egy pillanat alatt lefut.
+	chosenNumber = 0	#kivalasztott matrix sorszama
+	finalMatrices, endCoords = separateMatricesByEnd(matrix)	#szetszedett matrixok es a veg koordinatak
 	shortestPath = [0 for x in range(h * w)]
 	for i in range(len(finalMatrices)):
-		currentPathStart = astar(finalMatrices[i], 0, h, endCoords[i * 2], endCoords[i * 2 + 1])										#utvonal starttol poharig
+		currentPathStart = astar(finalMatrices[i], startX, startY, endCoords[i * 2], endCoords[i * 2 + 1])
+		currentEndColor = matrix[endCoords[i * 2 + 1] - 1][endCoords[i * 2]]
+		print("currentEndColor: ", currentEndColor)										#utvonal starttol poharig
 		if(len(currentPathStart) > 0):
-			currentPathZone = astar(finalMatrices[i], endCoords[i * 2], endCoords[i * 2 + 1], getZoneX(matrix, endCoords), 0) 					#utvonal pohartol zonaig
+			currentPathZone = astar(finalMatrices[i], endCoords[i * 2], endCoords[i * 2 + 1], getZoneX(matrix, endCoords, i), 1) 					#utvonal pohartol zonaig
 		else:
 			currentPathZone = []
 		if(len(currentPathStart) + len(currentPathZone) < len(shortestPath) and len(currentPathStart) != 0 and len(currentPathZone) != 0):	#ha rovidebb a teljes ut es egyik sem lehetetlen
 			currentPathStart.extend(currentPathZone)
 			shortestPath = currentPathStart
-	return shortestPath					#a Start path vege es a Zone path eleje ugyan az a mezo, tehat duplikalva van benne, de nem baj, ekkor fogja tudni a robi h a poharnal van
+			print("curr end color: ", currentEndColor)
+			finalEndColor = currentEndColor					#a kivalasztott utvonal vegpontjanak a szine
+			chosenNumber = i
+	print("CHOSEN PATH______", chosenNumber, ".")
+	astar(finalMatrices[chosenNumber], startX, startY, endCoords[chosenNumber * 2], endCoords[chosenNumber * 2 + 1])	#ujra kiirja a valasztott utat, hogy szemleletes legyen
+	currentPathZone = astar(finalMatrices[chosenNumber], endCoords[chosenNumber * 2], endCoords[chosenNumber * 2 + 1], getZoneX(matrix, endCoords, chosenNumber), 0)
+	print("FINAL END COLOR: ", finalEndColor) 
+	return shortestPath, finalEndColor			#a Start path vege es a Zone path eleje ugyan az a mezo, tehat duplikalva van benne, de nem baj, ekkor fogja tudni a robi h a poharnal van
 
-def fillMatrixRandom(matrix):  			
+def fillMatrixRandom(matrix):  		#feltolt egy matrixot random szinekkel, sok feherrel (csak tesztelesre)	
 	h = len(Matrix)
 	w = len(Matrix[0])
 	generatedMatrix = [[6 for x in range(w)] for y in range(h)]
@@ -192,3 +210,12 @@ def fillMatrixRandom(matrix):
 #printMatrix(matrix)
 #print(calculatePath(matrix)) #TODO: ezt kell atforditani parancssorozatta a robinak
 
+def readMatrixFromFile(h, w):		#matrix beolvasasa fajlbol, szokozzel elvalasztva
+	f = open("sample.txt", "r")
+	f1 = f.readlines()
+	fileMatrix = [[0 for x in range(w)] for y in range(h)]
+	i = 0
+	for y in f1:
+		fileMatrix[i] = list(map(int, y.split()))
+		i += 1
+	return fileMatrix

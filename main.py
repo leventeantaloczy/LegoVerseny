@@ -9,12 +9,14 @@ from constans import *
 from matrixCalc import *
 from movementSolve import *
 
+import dataStructure as data
+
 BP = brickpi3.BrickPi3()
 rampUp = 0
 move = Movement()
 
 BP.set_sensor_type(BP.PORT_2, BP.SENSOR_TYPE.EV3_COLOR_COLOR)
-BP.set_sensor_type(BP.PORT_4, BP.SENSOR_TYPE.EV3_ULTRASONIC_CM)																#A - bal, D - jobb motor
+BP.set_sensor_type(BP.PORT_4, BP.SENSOR_TYPE.EV3_ULTRASONIC_CM)																#A - bal, B - jobb motor
 color = ["none", "Black", "Blue", "Green", "Yellow", "Red", "White", "Brown"]
 
 for i in range(h + 1):
@@ -30,7 +32,7 @@ try:
 				rampUp = 15
 
 			try:
-				value = BP.get_sensor(BP.PORT_2)																	#TODO: szinszenzor itt olvasson be a mx-ba 															
+				value = BP.get_sensor(BP.PORT_2)																	#matrix feltoltes														
 				Matrix[y][x] = value
 				print(Matrix[y][x])
 			except brickpi3.SensorError as error:
@@ -51,9 +53,9 @@ try:
 					move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, rampUp)
 			rampUp = 0
 		if(y < h):
-			if(y % 2 == 0):
+			if(y % 2 == 0):												#paros-paratlan sorok, a cikk-cakk miatt
 				try:
-					value = BP.get_sensor(BP.PORT_2)																	#TODO: szinszenzor itt olvasson be a mx-ba 															
+					value = BP.get_sensor(BP.PORT_2)																	 															
 					Matrix[y][x] = value
 					print(Matrix[y][x + 1])
 				except brickpi3.SensorError as error:
@@ -69,7 +71,7 @@ try:
 
 			else:
 				try:
-					value = BP.get_sensor(BP.PORT_2)																	#TODO: szinszenzor itt olvasson be a mx-ba 															
+					value = BP.get_sensor(BP.PORT_2)																	 															
 					Matrix[y][x] = value
 					print(Matrix[y][x + 1])
 				except brickpi3.SensorError as error:
@@ -88,8 +90,15 @@ except KeyboardInterrupt:
 
 var = raw_input()
 
-
-winVerseny(BP, processRawMatrix(Matrix))
+Matrix = processRawMatrix(Matrix)
+startX, startY, color = winVerseny(BP, Matrix, 0, h) #startX, Y es color kell a kovetkezo szin kikeresesehez, globalissal valamiert nem mukodott
+printMatrix(Matrix)
+print("End Color1: ", color) 						#az elso kitorlendo szin
+Matrix = deleteColorFromMatrix(Matrix, color)		#szinkitorles -> 6
+startX, startY, color = winVerseny(BP, Matrix, startX, startY)	#tovabblepes a kovi szinre
+print("End Color2: ", color)						#masodik kitorlendo szin
+Matrix = deleteColorFromMatrix(Matrix, color)		
+startX, startY, color = winVerseny(BP, Matrix, startX, startY) #csak egy maradt, vege.
 
 f = open("mx.txt", "w+")
 

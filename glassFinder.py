@@ -16,7 +16,7 @@ wheels = 1
 
 BP.set_sensor_type(BP.PORT_2, BP.SENSOR_TYPE.EV3_COLOR_COLOR)
 BP.set_sensor_type(BP.PORT_4, BP.SENSOR_TYPE.EV3_ULTRASONIC_CM)
-BP.set_sensor_type(BP.PORT_3, BP.SENSOR_TYPE.EV3_ULTRASONIC_CM)
+BP.set_sensor_type(BP.PORT_3, BP.SENSOR_TYPE.EV3_ULTRASONIC_CM)					#DUPLA ULTRAHANGOS OBJEKTUM LOKALIZACIO, NINCSEN HASZNALATBAN
 
 time.sleep(5)
 
@@ -25,7 +25,7 @@ try:
 	try:
 		valueLeft = BP.get_sensor(BP.PORT_4)
 		valueRight = BP.get_sensor(BP.PORT_3)
-		print(valueLeft, " ", valueRight)																#TODO: szinszenzor itt olvasson be a mx-ba 
+		print(valueLeft, " ", valueRight)																
 	except brickpi3.SensorError as error:
 		print(error)
 	if((valueLeft < 35 and valueLeft > 10) or (valueRight < 35 and valueRight > 10)):
@@ -43,7 +43,7 @@ try:
 				print("going far away!")
 				valueLeft = BP.get_sensor(BP.PORT_4)
 				valueRight = BP.get_sensor(BP.PORT_3)
-				print(valueLeft, " ", valueRight)																#TODO: szinszenzor itt olvasson be a mx-ba 
+				print(valueLeft, " ", valueRight)																
 			except brickpi3.SensorError as error:
 				print(error)
 		move.stopMotors(BP)
@@ -62,15 +62,13 @@ try:
 	while(not notfound and not foundLeft and not foundRight):
 		try:
 			valueLeft = BP.get_sensor(BP.PORT_4)
-			#print("ValL: ", valueLeft)																	#TODO: szinszenzor itt olvasson be a mx-ba 
 		except brickpi3.SensorError as error:
 			print(error)
 		if(valueLeft < closeDist and valueLeft > 1):
 			foundLeft = True
 			print("found left!")
 		try:
-			valueRight = BP.get_sensor(BP.PORT_3)
-			#print("ValR: ", valueRight)																	#TODO: szinszenzor itt olvasson be a mx-ba 
+			valueRight = BP.get_sensor(BP.PORT_3) 
 		except brickpi3.SensorError as error:
 			print(error)
 		if(valueRight < closeDist and valueRight > 1):
@@ -92,7 +90,6 @@ try:
 		while(not foundRight):
 			try:
 				valueRight = BP.get_sensor(BP.PORT_3)
-				#print("ValR: ", valueRight)																	#TODO: szinszenzor itt olvasson be a mx-ba 
 			except brickpi3.SensorError as error:
 				print(error)
 			if(valueRight < closeDist and valueRight > 1):
@@ -109,7 +106,6 @@ try:
 		while(not foundLeft):
 			try:
 				valueLeft = BP.get_sensor(BP.PORT_4)
-				#print("ValL: ", valueLeft)																	#TODO: szinszenzor itt olvasson be a mx-ba 
 			except brickpi3.SensorError as error:
 				print(error)
 			if(valueLeft < closeDist and valueLeft > 1):
@@ -132,7 +128,6 @@ try:
 			print(BP.get_motor_encoder(BP.PORT_A))
 			try:
 				valueLeft = BP.get_sensor(BP.PORT_4)
-				#print("ValL: ", valueLeft)																	#TODO: szinszenzor itt olvasson be a mx-ba 
 			except brickpi3.SensorError as error:
 				print(error)
 			if(valueLeft < closeDist and valueLeft > 1):
@@ -140,7 +135,6 @@ try:
 				print("found left!")
 			try:
 				valueRight = BP.get_sensor(BP.PORT_3)
-				#print("ValR: ", valueRight)																	#TODO: szinszenzor itt olvasson be a mx-ba 
 			except brickpi3.SensorError as error:
 				print(error)
 			if(valueRight < closeDist and valueRight > 1):
@@ -161,7 +155,6 @@ try:
 			while(not foundLeft):
 				try:
 					valueLeft = BP.get_sensor(BP.PORT_4)
-					#print("ValL: ", valueLeft)																	#TODO: szinszenzor itt olvasson be a mx-ba 
 				except brickpi3.SensorError as error:
 					print(error)
 				if(valueLeft < closeDist and valueLeft > 1):
@@ -177,7 +170,6 @@ try:
 			while(not foundRight):
 				try:
 					valueRight = BP.get_sensor(BP.PORT_3)
-					#print("ValR: ", valueRight)																	#TODO: szinszenzor itt olvasson be a mx-ba 
 				except brickpi3.SensorError as error:
 					print(error)
 				if(valueRight < closeDist and valueRight > 1):

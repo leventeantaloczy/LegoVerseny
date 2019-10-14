@@ -47,7 +47,7 @@ class Movement:
 
 		time.sleep(0.01)
 
-	def motorRotateDegreeNewB(self, motorPort_1, motorPort_2, degrees, power, BP, rampUpSteps):															#egyenseben tarto fuggveny
+	def motorRotateDegreeNewB(self, motorPort_1, motorPort_2, degrees, power, BP, rampUpSteps):															#egyenseben tarto fuggveny hatra
 
 			power_1 = -power
 			power_2 = -power
@@ -87,7 +87,7 @@ class Movement:
 
 			time.sleep(0.01)
 
-	def motorRotateDegreeNewF(self, motorPort_1, motorPort_2, degrees, power, BP, rampUpSteps):															#egyenseben tarto fuggveny
+	def motorRotateDegreeNewF(self, motorPort_1, motorPort_2, degrees, power, BP, rampUpSteps):															#egyenseben tarto fuggveny elore
 
 				power_1 = power
 				power_2 = power
@@ -258,4 +258,8 @@ class Movement:
 		BP.set_motor_power(BP.PORT_B, 0)
 		BP.set_motor_power(BP.PORT_A, 0)
 		BP.set_motor_power(BP.PORT_C, 0)
+
+	def resetMotors(self, BP):
+		BP.reset_motor_encoder(BP.PORT_A)
+		BP.reset_motor_encoder(BP.PORT_B)
 
