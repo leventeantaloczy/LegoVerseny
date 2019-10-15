@@ -8,7 +8,29 @@ from random import randrange
 from dataStructure import *
 from constans import *
 
+from numpy import median
 import numpy as np
+import constans as con
+
+def setZones(options):
+	if(options[1][0] == 'r'):
+		con.redZoneX = 3
+	elif(options[1][0] == 'g'):
+		con.greenZoneX = 3
+	elif(options[1][0] == 'b'):
+		con.blueZoneX = 3
+	if(options[1][1] == 'r'):
+		con.redZoneX = 5
+	elif(options[1][1]== 'g'):
+		con.greenZoneX = 5
+	elif(options[1][1] == 'b'):
+		con.blueZoneX = 5
+	if(options[1][2] == 'r'):
+		con.redZoneX = 8
+	elif(options[1][2] == 'g'):
+		con.greenZoneX = 8
+	elif(options[1][2] == 'b'):
+		con.blueZoneX = 8
 
 #class-t kivettem mert problemazott mindig a selffel, pls fix -T
 		
@@ -32,8 +54,6 @@ def deleteColorFromMatrix(Matrix, color): #megadott szint alakit at jarhato utta
 
 
 def separateMatricesByEnd(Matrix): # osmatrix a bemenet, unicolorra alakit, visszaadja az ertekes szinu matrixokat es a hozzajuk tartozo celkoordinatakat
-	print("flippedMatrix")
-	printMatrix(Matrix)
 	h = len(Matrix)
 	w = len(Matrix[0])
 	coloredItemSum = 0;
@@ -63,13 +83,13 @@ def getZoneX(Matrix, endCoords, i): #megszerzi a cel mezo szinet es visszaadja a
 	print("chosen colour: ", item)
 	print("Y: %d X: %d" %(endCoords[i * 2 + 1] - 1, endCoords[i * 2]))
 	if(item == 2):
-		return blueZoneX
+		return con.blueZoneX
 	if(item == 3):
-		return greenZoneX
+		return con.greenZoneX
 	if(item == 5):
-		return redZoneX
+		return con.redZoneX
 	else:
-		return blueZoneX #temp
+		return con.blueZoneX #temp
 
 def leaveOneEnd(Matrix, which): #unicolor matrixban bent hagyja a megadott sorszamu ertekes celt, a tobbit falla alakitja es visszaadja az igy kapott matrixot es a celkoordinatat
 	h = len(Matrix)
@@ -126,6 +146,8 @@ def processRawMatrix(Matrix):	#robot altal beolvasott nyers matrixot valtottsoro
 	nMatrix = np.flipud(nMatrix)
 	flippedMatrix = [[0 for x in range(len(Matrix[0]))] for y in range(len(Matrix))]
 	flippedMatrix =	nMatrix.tolist()
+	print("flippedMatrix")
+	printMatrix(flippedMatrix)
 	return flippedMatrix
 
 
@@ -219,3 +241,39 @@ def readMatrixFromFile(h, w):		#matrix beolvasasa fajlbol, szokozzel elvalasztva
 		fileMatrix[i] = list(map(int, y.split()))
 		i += 1
 	return fileMatrix
+
+def matrixMedian(matrix, cellLength):
+	h = len(matrix)
+	w = len(matrix[0])
+	filteredMatrix = [[6 for x in range(int(w / cellLength))] for y in range(h)]
+	for y in range(h):
+		for x in range(0, w - 2, cellLength):
+			temp = x
+			tempMedian = []
+			for i in range(cellLength):
+				#print("TEMP: ", temp)
+				#print("VAL: ", matrix[y][temp])
+				tempMedian.append(matrix[y][temp])
+				temp += 1
+			print(int(median(tempMedian)))
+			filteredMatrix[y][int(x / cellLength)] = int(median(tempMedian))
+	printMatrix(filteredMatrix)
+	return filteredMatrix
+
+def removeBelow(matrix):
+	h = len(matrix)
+	w = len(matrix[0])
+	for y in range(h):
+		for x in range(w):
+			item = matrix[y][x]
+			if(y < h - 1):
+				below = matrix[y + 1][x]
+				if(item == below and item != 4):
+					matrix[y + 1][x] = 6
+	print("Removed below: ")
+	printMatrix(matrix)
+	return(matrix)
+
+
+
+			

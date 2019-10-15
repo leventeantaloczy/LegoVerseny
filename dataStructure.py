@@ -13,6 +13,7 @@ class Color(Enum):
 
 
 
-w = 10																															#width
+w = 120																															#width
 h = 10																													#height
-Matrix = [[0 for x in range(w + 1)] for y in range(h + 1)]																# matrix initialization 
+bigMatrix = [[0 for x in range(w + 1)] for y in range(h + 1)]
+Matrix = [[0 for x in range(11)] for y in range(11)]																	# matrix initialization 

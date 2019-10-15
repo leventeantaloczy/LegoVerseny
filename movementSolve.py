@@ -88,6 +88,7 @@ def winVerseny(BP, Matrix, startX, startY):							#Lefordit egy kapott utvonalat
 			elif(whereTo == 0):
 				print("Poharboi")
 				move.stopMotors(BP)
+				time.sleep(0.2)
 				wheels = findGlass(BP, wheels)
 			prevDir = whereTo
 			newStartX = int(pathString[i][0])					#kovetkezo start pont
@@ -136,18 +137,20 @@ def findGlass(BP, wheels):						#objektum kereso, a wheels-t parameterkent kapja
 	print("wheels in find: ", wheels)
 	move.resetMotors(BP)
 	time.sleep(0.2)
-	value = getSensorMedian(BP, sampleRate)
-	if(value > proxMax):						#ha nagyon messze van nagy tavban kezd el tracelni
+	value = getSensorMedian(BP, sampleRate * 3)
+	if(value > 200):
+		print("far far away")
+		wheels = trace(-30, proxMin, BP, wheels, False)
+	elif(value > proxMax):						#ha nagyon messze van nagy tavban kezd el tracelni
 		print("30-nal messzebb")
-		wheels = trace(-30, 30, BP, wheels)
-		value = proxMin + 1
-	if(value < proxMax and value > proxMin):	#ha 10-30cm kozott van kozeledik amig ele nem kerul vagy melle es elveszti a jelet 
+		wheels = trace(-30, 30, BP, wheels, True)
+	elif(value < proxMax and value > proxMin):	#ha 10-30cm kozott van kozeledik amig ele nem kerul vagy melle es elveszti a jelet 
 		print("30-10 belul")
 		if(wheels == 0):
 			move.centralTurnSec(BP.PORT_C, turnTime, turnSpeed, BP)
 			wheels = 1;
 		move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, 300, -30, BP, 0)
-		while(value > proxMin and value < proxMax + 10 ):
+		while(value > proxMin - 3 and value < proxMax + 10 ):
 			BP.set_motor_power(BP.PORT_A, -20)
 			BP.set_motor_power(BP.PORT_B, -20)
 			value = getSensorMedian(BP, sampleRate)
@@ -160,7 +163,10 @@ def findGlass(BP, wheels):						#objektum kereso, a wheels-t parameterkent kapja
 			enslaveOrFreePohar(BP, -65, 0.6)
 		else:									#ha elvesztette mert melle ert, el kell kezdeni tracelni kozelre
 			print("elvesztettem, tracing")
-			wheels = trace(-30, proxMin, BP, wheels)
+			wheels = trace(-30, proxMin, BP, wheels, False)
+		if(wheels == 0):
+			move.centralTurnSec(BP.PORT_C, turnTime, turnSpeed, BP)
+			wheels = 1;
 		move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, abs(YDist), -30, BP, 15) #delta Y kompenzacio
 	elif(value < proxMin):						#ha egybol ott van elotte
 		print("egybol meglett")
@@ -172,10 +178,11 @@ def findGlass(BP, wheels):						#objektum kereso, a wheels-t parameterkent kapja
 	return wheels
 
 
-def trace(power, proximity, BP, wheels): #jobbra-balra valo oldalazas, ha megtalalja a poharat lecsap
+def trace(power, proximity, BP, wheels, distant): #jobbra-balra valo oldalazas, ha megtalalja a poharat lecsap
 	move.stopMotors(BP)
 	time.sleep(0.2)
 	tempEncoder = 0
+	count = 0
 	print("wheels on trace: ", wheels)
 	if(wheels == 1):
 		move.centralTurnSec(BP.PORT_C, turnTime, -turnSpeed, BP)
@@ -183,39 +190,89 @@ def trace(power, proximity, BP, wheels): #jobbra-balra valo oldalazas, ha megtal
 	move.resetMotors(BP)
 	print("megindultam jobbra")
 	value = getSensorMedian(BP, sampleRate)
-	while(abs(BP.get_motor_encoder(BP.PORT_A)) < glassTrace and abs(BP.get_motor_encoder(BP.PORT_B)) < glassTrace and value > proximity):  #eloszor jobbra meg glassTrace fokot
-		BP.set_motor_power(BP.PORT_A, speed)
-		BP.set_motor_power(BP.PORT_B, speed)
+	while(abs(BP.get_motor_encoder(BP.PORT_A)) < glassTrace and abs(BP.get_motor_encoder(BP.PORT_B)) < glassTrace and count < 3):  #eloszor jobbra meg glassTrace fokot
+		BP.set_motor_power(BP.PORT_A, -30)
+		BP.set_motor_power(BP.PORT_B, -30)
 		print("A: ", BP.get_motor_encoder(BP.PORT_A))
 		print("B: ", BP.get_motor_encoder(BP.PORT_B))
 		value = getSensorMedian(BP, sampleRate)
+		if(value < proximity):
+			count += 1
+		else:
+			count = 0
 	move.stopMotors(BP)
 	time.sleep(0.2)
 	if(value <= proximity):					#ha a porximity miatt lett vege a ciklusnak megvan az objektum es lecsap
 		print("jobbra meglett")
 		tempEncoder = abs(BP.get_motor_encoder(BP.PORT_A))
-		move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, glassTrace / 2, -30, BP, 0) #egy kis pozicionalas, meg tesztelni kell
+		#move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, glassTrace / 2, -30, BP, 0) #egy kis pozicionalas, meg tesztelni kell
 		move.stopMotors(BP)
 		time.sleep(0.2)
-		enslaveOrFreePohar(BP, -65, 0.6)
+		if(distant):
+			move.centralTurnSec(BP.PORT_C, turnTime, turnSpeed, BP)
+			move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, glassTrace * 1.5, -30, BP, 0)
+			enslaveOrFreePohar(BP, -65, 0.6)
+			move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, glassTrace * 1.5, -30, BP, 0)
+			move.centralTurnSec(BP.PORT_C, turnTime, -turnSpeed, BP)
+		else:		
+			enslaveOrFreePohar(BP, -65, 0.6)
 		move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, tempEncoder + abs(BP.get_motor_encoder(BP.PORT_A)), -30, BP, 0) #vissza a matrixra
 	else:
+		count = 0
 		print("megindultam balra (mert nem lett jobbra)")			#ha nem volt jobbra akkor ketszer annyit probal visszajonni balrafele
 		value = getSensorMedian(BP, sampleRate)
-		while(BP.get_motor_encoder(BP.PORT_A) < glassTrace and BP.get_motor_encoder(BP.PORT_B) < glassTrace and value > proximity):
-			BP.set_motor_power(BP.PORT_A, -speed)
-			BP.set_motor_power(BP.PORT_B, -speed)
+		while(BP.get_motor_encoder(BP.PORT_A) < glassTrace and BP.get_motor_encoder(BP.PORT_B) < glassTrace and count < 3):
+			BP.set_motor_power(BP.PORT_A, 30)
+			BP.set_motor_power(BP.PORT_B, 30)
+			print("A: ", BP.get_motor_encoder(BP.PORT_A))
+			print("B: ", BP.get_motor_encoder(BP.PORT_B))
 			value = getSensorMedian(BP, sampleRate)
+			if(value < proximity):
+				count += 1
+			else:
+				count = 0
 		move.stopMotors(BP)
 		time.sleep(0.2)
 		if(value <= proximity):			#ha proximity miatt lett vege akkor lecsap
 			print("balra meglett")
-			tempEncoder = abs(BP.get_motor_encoder(BP.PORT_A))
-			move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, glassTrace / 2, -30, BP, 0)
+			tempEncoder = BP.get_motor_encoder(BP.PORT_A)
+			#move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, glassTrace / 2, -30, BP, 0)
 			move.stopMotors(BP)
 			time.sleep(0.2)
-			enslaveOrFreePohar(BP, -65, 0.6)
-			move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, tempEncoder + abs(BP.get_motor_encoder(BP.PORT_A)), -30, BP, 0)	#kompenzacio
+			if(distant):
+				move.centralTurnSec(BP.PORT_C, turnTime, turnSpeed, BP)
+				move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, glassTrace * 1.5, -30, BP, 0)
+				enslaveOrFreePohar(BP, -65, 0.6)
+				move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, glassTrace * 1.5, -30, BP, 0)
+				move.centralTurnSec(BP.PORT_C, turnTime, -turnSpeed, BP)
+				move.resetMotors(BP)
+				if(tempEncoder > 0):
+					BP.set_motor_power(BP.PORT_A, -30)
+					BP.set_motor_power(BP.PORT_B, -30)
+					while(abs(BP.get_motor_encoder(BP.PORT_A)) < abs(tempEncoder) and abs(BP.get_motor_encoder(BP.PORT_B)) < abs(tempEncoder)):
+						pass
+					move.stopMotors(BP)
+				else:
+					BP.set_motor_power(BP.PORT_A, 30)
+					BP.set_motor_power(BP.PORT_B, 30)
+					while(abs(BP.get_motor_encoder(BP.PORT_A)) < abs(tempEncoder) and abs(BP.get_motor_encoder(BP.PORT_B)) < abs(tempEncoder)):
+						pass
+					move.stopMotors(BP)	#kompenzacio
+
+			else:		
+				enslaveOrFreePohar(BP, -65, 0.6)
+				if(BP.get_motor_encoder(BP.PORT_A) > 0):
+					BP.set_motor_power(BP.PORT_A, -30)
+					BP.set_motor_power(BP.PORT_B, -30)
+					while(BP.get_motor_encoder(BP.PORT_A) > 0 and BP.get_motor_encoder(BP.PORT_B) > 0):
+						pass
+					move.stopMotors(BP)
+				else:
+					BP.set_motor_power(BP.PORT_A, 30)
+					BP.set_motor_power(BP.PORT_B, 30)
+					while(BP.get_motor_encoder(BP.PORT_A) < 0 and BP.get_motor_encoder(BP.PORT_B) < 0):
+						pass
+					move.stopMotors(BP)	#kompenzacio
 		else:
 			while(BP.get_motor_encoder(BP.PORT_A) < 0 and BP.get_motor_encoder(BP.PORT_B) < 0):			#ha nem lett meg vissza 0 fokra, de ez pontatlan, meg dolgozni kell rajta(ritka)
 				BP.set_motor_power(BP.PORT_A, speed)
@@ -231,7 +288,6 @@ def getSensorMedian(BP, samples): #fog samples szamu szenzoradatot es visszaadja
 	for i in range(samples):
 		try:
 			value = BP.get_sensor(BP.PORT_4)
-			print(value)
 			sensorData.append(value)													
 		except brickpi3.SensorError as error:
 			print(error)

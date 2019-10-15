@@ -20,19 +20,9 @@ color = ["none", "Black", "Blue", "Green", "Yellow", "Red", "White", "Brown"]
 time.sleep(3)
 
 try:																								#EZ EGY TESZT MAIN, HA CSAK AZ UTVONALTERVEZEST KELL TESZTELNI FAJLBOL BEOLVASOTT MATRIXXAL
-	testMatrix = readMatrixFromFile(11, 121)
-	printMatrix(testMatrix)
-	Matrix = matrixMedian(testMatrix, 11)
-	Matrix = processRawMatrix(Matrix)
-	Matrix = removeBelow(Matrix)
-	startX, startY, color = winVerseny(BP, Matrix, 0, h)
-	printMatrix(Matrix)
-	print("End Color1: ", color)
-	Matrix = deleteColorFromMatrix(Matrix, color)
-	startX, startY, color = winVerseny(BP, Matrix, startX, startY)
-	print("End Color2: ", color)
-	Matrix = deleteColorFromMatrix(Matrix, color)
-	startX, startY, color = winVerseny(BP, Matrix, startX, startY)
+	while(True):
+		print(getSensorMedian(BP, 10))
+		time.sleep(0.1)
 
 except KeyboardInterrupt:
 	BP.reset_all()

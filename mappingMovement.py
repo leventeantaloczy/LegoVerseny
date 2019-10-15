@@ -85,8 +85,6 @@ class Movement:
 					power_1 = -power
 					power_2 = -power
 
-			time.sleep(0.01)
-
 	def motorRotateDegreeNewF(self, motorPort_1, motorPort_2, degrees, power, BP, rampUpSteps):															#egyenseben tarto fuggveny elore
 
 				power_1 = power
@@ -105,9 +103,6 @@ class Movement:
 						time.sleep(0.05)
 						power_1 += powerInc1
 						power_2 += powerInc2
-
-				print("Forward \n\r __________________________")
-
 
 				while abs(BP.get_motor_encoder(motorPort_1)) <= degrees and abs(BP.get_motor_encoder(motorPort_2)) <= degrees:
 
@@ -128,8 +123,99 @@ class Movement:
 						power_2 = power
 						power_1 = power
 
-				time.sleep(0.01)
+	def backwardTracking(self, degrees, power, BP, rampUpSteps):
 
+		scannedLine = []
+		deltaX = int(degrees / w)
+		print("deltaX ", deltaX)
+		tempEncoder = -12
+
+		power_1 = -power
+		power_2 = -power
+
+		BP.reset_motor_encoder(BP.PORT_A)
+		BP.reset_motor_encoder(BP.PORT_B)
+
+		while abs(BP.get_motor_encoder(BP.PORT_A)) <= degrees and abs(BP.get_motor_encoder(BP.PORT_B)) <= degrees:
+			encoderA = abs(BP.get_motor_encoder(BP.PORT_A))
+			encoderB = abs(BP.get_motor_encoder(BP.PORT_B))
+			BP.set_motor_power(BP.PORT_A, power_1)
+			BP.set_motor_power(BP.PORT_B, power_2)
+			#print("Encoder1 % 3d Encoder2 % 3d power_1 % 3d power_2 % 3d" %(BP.get_motor_encoder(BP.PORT_A), BP.get_motor_encoder(BP.PORT_B), power_1, power_2))
+			if(encoderA % deltaX < 10 and encoderA - tempEncoder > 11):
+				try:
+					tempEncoder = encoderA
+					value = BP.get_sensor(BP.PORT_2)																	#matrix feltoltes														
+					scannedLine.append(value)
+					#print("scanned thing: ", value)
+				except brickpi3.SensorError as error:
+					print(error)
+
+			if(encoderB - encoderA > 0):
+																				#A-D
+				if(abs(power_1) < abs(power * 1.1)):
+					power_1 += 1
+
+			elif(encoderA - encoderB > 0):									#D-A
+				if(abs(power_2) < abs(power * 1.1)):
+					power_2 += 1
+
+			else:
+				power_2 = -power
+				power_1 = -power
+		print("Scanned Line:____________ \n\r", scannedLine)
+		return scannedLine
+
+	def forwardTracking(self, degrees, power, BP, rampUpSteps):
+
+		scannedLine = []
+		deltaX = int(degrees / w)
+		print("deltaX ", deltaX)
+		tempEncoder = -12
+
+		power_1 = power
+		power_2 = power
+		finalPower = power
+
+		BP.reset_motor_encoder(BP.PORT_A)
+		BP.reset_motor_encoder(BP.PORT_B)
+
+		if(rampUpSteps > 0):
+			power /= 10
+
+		while abs(BP.get_motor_encoder(BP.PORT_A)) <= degrees and abs(BP.get_motor_encoder(BP.PORT_B)) <= degrees:
+			if(abs(power) < abs(finalPower)):
+				power -= 0.1
+			else:
+				power = finalPower
+			encoderA = abs(BP.get_motor_encoder(BP.PORT_A))
+			encoderB = abs(BP.get_motor_encoder(BP.PORT_B))
+			BP.set_motor_power(BP.PORT_A, power_1)
+			BP.set_motor_power(BP.PORT_B, power_2)
+			#print("Encoder1 % 3d Encoder2 % 3d power_1 % 3d power_2 % 3d" %(BP.get_motor_encoder(BP.PORT_A), BP.get_motor_encoder(BP.PORT_B), power_1, power_2))
+			if(encoderA % deltaX < 10 and encoderA - tempEncoder > 11):
+				try:
+					tempEncoder = encoderA
+					value = BP.get_sensor(BP.PORT_2)																	#matrix feltoltes														
+					scannedLine.append(value)
+					#print("scanned thing: ", value)
+				except brickpi3.SensorError as error:
+					print(error)
+
+			if(encoderB - encoderA > 0):
+																				#A-D
+				if(abs(power_1) < abs(power * 1.1)):
+					power_1 -= 1
+
+			elif(encoderA - encoderB > 0):									#D-A
+				if(abs(power_2) < abs(power * 1.1)):
+					power_2 -= 1
+
+			else:
+				power_2 = power
+				power_1 = power
+		print("Scanned Line:____________ \n\r", scannedLine)
+		return scannedLine
 
 	def oneMotorTurn(self, motorPort, motorPort_stop, turnDegree, power, BP):
 		BP.reset_motor_encoder(motorPort)
@@ -230,9 +316,9 @@ class Movement:
 		BP.reset_motor_encoder(BP.PORT_B)
 		BP.set_motor_power(Port, power)
 		if(power < 0):
-			bigPower = 19
+			bigPower = 18
 		else:
-			bigPower = -19
+			bigPower = -18
 		BP.set_motor_power(BP.PORT_A, bigPower)
 		BP.set_motor_power(BP.PORT_B, bigPower)
 		startTime = time.time()
