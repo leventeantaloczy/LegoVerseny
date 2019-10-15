@@ -14,11 +14,11 @@ import constans as con
 
 def setZones(options):
 	if(options[1][0] == 'r'):
-		con.redZoneX = 3
+		con.redZoneX = 2
 	elif(options[1][0] == 'g'):
-		con.greenZoneX = 3
+		con.greenZoneX = 2
 	elif(options[1][0] == 'b'):
-		con.blueZoneX = 3
+		con.blueZoneX = 2
 	if(options[1][1] == 'r'):
 		con.redZoneX = 5
 	elif(options[1][1]== 'g'):

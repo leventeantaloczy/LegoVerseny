@@ -14,10 +14,10 @@ from dataStructure import *
 speed = -65				#altalanos sebesseg, matrix beolvasaskor es utvonal kereseskor is
 turnSpeed = 80			#kerekek fizkai elfordulasanak sebessege
 wheelRotateDegree = 910 #egy matrix mezo oldalanak hossza
-turnTime = 0.65		#lemerult: 0.8-1.0	feltoltve 0.65-0.75
+turnTime = 0.85		#lemerult: 0.8-1.0	feltoltve 0.65-0.75
 waitSecs = 0.4		#altalanos varakozasi ido
 rampDown = 150		#matrix beolvasasnal lassitas hossza
-glassTrace = 400	#tracinghez hasznalt fokmennyiseg egyik ill masik oldalra
+glassTrace = 800	#tracinghez hasznalt fokmennyiseg egyik ill masik oldalra
 closeDist = 12
 
 def init():

@@ -185,7 +185,7 @@ class Movement:
 
 		while abs(BP.get_motor_encoder(BP.PORT_A)) <= degrees and abs(BP.get_motor_encoder(BP.PORT_B)) <= degrees:
 			if(abs(power) < abs(finalPower)):
-				power -= 0.1
+				power -= 0.2
 			else:
 				power = finalPower
 			encoderA = abs(BP.get_motor_encoder(BP.PORT_A))

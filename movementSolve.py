@@ -103,16 +103,19 @@ def winVerseny(BP, Matrix, startX, startY):							#Lefordit egy kapott utvonalat
 		move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, rampUp)
 		move.stopMotors(BP)
 		enslaveOrFreePohar(BP, 65, 0.6)
-		time.sleep(0.5)
-		try:
-			value = BP.get_sensor(BP.PORT_4)																	
-		except brickpi3.SensorError as error:
-			print(error)
-		if(value < 15):																					#ha nem esett le a pohar kicsit nekimegy majd vissza
-			move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, 300, -40, BP, 0)
-			time.sleep(0.2)
-			move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, 300, -40, BP, 0)
-			move.stopMotors(BP)
+		time.sleep(0.2)
+		move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, rampUp)
+		move.stopMotors(BP)
+		time.sleep(0.2)
+		enslaveOrFreePohar(BP, -65, 0.6)
+		move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, rampUp)
+		move.stopMotors(BP)
+		enslaveOrFreePohar(BP, 65, 0.6)
+		#if(value < 15):																					#ha nem esett le a pohar kicsit nekimegy majd vissza
+		#	move.motorRotateDegreeNewF(BP.PORT_A, BP.PORT_B, 300, -40, BP, 0)
+		#	time.sleep(0.2)
+		#	move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, 300, -40, BP, 0)
+		#	move.stopMotors(BP)
 		move.motorRotateDegreeNewB(BP.PORT_A, BP.PORT_B, wheelRotateDegree, speed, BP, rampUp)
 		move.stopMotors(BP)
 			

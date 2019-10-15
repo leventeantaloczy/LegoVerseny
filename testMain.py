@@ -8,6 +8,14 @@ from mappingMovement import *
 from constans import *
 from matrixCalc import *
 from movementSolve import *
+import sys
+import constans as con
+import matrixCalc
+
+options = sys.argv
+print(options)
+con.init()
+matrixCalc.setZones(options)
 
 BP = brickpi3.BrickPi3()
 rampUp = 0

@@ -2,7 +2,7 @@ from __future__ import print_function
 from __future__ import division
 from builtins import input
 import time
-
+import sys
 from dataStructure import *
 from mappingMovement import *
 from constans import *
@@ -20,9 +20,11 @@ color = ["none", "Black", "Blue", "Green", "Yellow", "Red", "White", "Brown"]
 time.sleep(3)
 
 try:																								#EZ EGY TESZT MAIN, HA CSAK AZ UTVONALTERVEZEST KELL TESZTELNI FAJLBOL BEOLVASOTT MATRIXXAL
-	while(True):
-		print(getSensorMedian(BP, 10))
-		time.sleep(0.1)
+	for i in range(10):
+		move.centralTurnSec(BP.PORT_C, turnTime, -turnSpeed, BP)
+		time.sleep(1)
+		move.centralTurnSec(BP.PORT_C, turnTime, turnSpeed, BP)
+		time.sleep(1)
 
 except KeyboardInterrupt:
 	BP.reset_all()
